@@ -100,11 +100,22 @@ harvesttext是學長推薦的中文NLP工具包
 停用字的選擇是用harvesttext裡包好的get_baidu_stop_words
 除此之外，在數字、標點符號的地方沒有清乾淨
 再另外做一個方法清理
+
+上面分詞跟刪除停用字我將一起做，每次刪完記得回去看一下資料是不是如預期一樣分詞!
+
+
 ## Tokenize
+為了要讓機器看得懂自然語言
+
 ### Word Embedding
+https://github.com/RaRe-Technologies/gensim/wiki/Migrating-from-Gensim-3.x-to-4
+gensimi在4.x.x版本以後不再支援第三方wrapper
+將3.8.13複製過來或者降低gensim版本
+
 ### Bag of Words
 
 ### TF-IDF
+用sklearn裡面的套件做的tokenization，
 
 ## Classification
 ### SVM
@@ -113,7 +124,15 @@ harvesttext是學長推薦的中文NLP工具包
 ### XGBoost
 
 ## Experimental Result
+光是xgboost就有超多種參數可以做調整
+<!-- 
+ 可以改由Skorch 或 Pytorch 架構改寫
+還能加上wandb 使用 sweep 找到更好的hyper parameters -->
 
+還可以用RandmizedCV調整參數
+
+## Package
+打包帶走
 
 ## Discussion
 
