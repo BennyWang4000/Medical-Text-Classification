@@ -14,19 +14,19 @@ from tqdm import tqdm
 #     return re.sub(remove_chars, '', text)
 
 
-def _remove_stop_words(sentence, stopwords_path):
+def _remove_stop_words(words, stopwords_path):
     result = []
     stopwords = set(line.strip() for line in open(stopwords_path))
-    for word in sentence:
+    for word in words:
         if word not in stopwords:
             result.append(word)
     return result
 
 
-def word_segment(line, stopwords_path):
-    seg_line = jieba.cut(line)
-    seg_line = _remove_stop_words(seg_line, stopwords_path)
-    return seg_line
+def word_segment(sentence, stopwords_path):
+    words = jieba.cut(sentence)
+    words = _remove_stop_words(words, stopwords_path)
+    return words
 
 
 def save_segment_txt(saving_path, data_path, len_lines):
