@@ -134,7 +134,7 @@ cat_dep|amounts
 ## **Text Process**
 在NLP任務時，還有許多準備工作要做
 在這部分流程圖在以下
-::: mermaid
+``` mermaid
 graph LR
 raw((Raw Ask Text)) -->seg[Text Segment] 
 seg --> rm[Remove Stopwords]
@@ -143,15 +143,15 @@ subgraph Pipeline
 w2v --> cls[Classifier]
 end
 cls --> out((Output Class))
-:::
+```
 
 ### **Word Segment**
 文本進來時，會是一長串的字串，必須要先經過分詞、
 資料集是簡體中文，採用簡單的 jieba 做分詞
-::: mermaid
+``` mermaid
 graph LR
 raw['人類總要重複同樣的錯誤']  -->|Word Segment|re['人類', '總要', '重複', '同樣', '的','錯誤']
-:::
+```
 這部分沒有改任何的參數，原本的分詞效果就很不錯了。
 ```python
 import jieba
@@ -176,10 +176,11 @@ def word_segment(sentence, stopwords_path):
 ```
 分完詞以後，再接著做去除停用詞
 ### **Remove Stopwords**
-::: mermaid
+
+``` mermaid
 graph LR
 re['人類', '總要', '重複', '同樣', '的','錯誤']-->|Remove Stopwords|rmstp['人類', '重複', '同樣','錯誤']  
-:::
+```
 
 在一段文字的組成中，介係詞、代名詞等等不具有關鍵意義的詞，會被視為是停用詞(stopwords)。再經過斷詞以後，這些詞同樣也會被切出，但它們不太能表達句子意思，故在這裡的NLP任務去除
 
