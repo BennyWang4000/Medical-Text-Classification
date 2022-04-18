@@ -2,7 +2,6 @@
 from harvesttext.resources import get_baidu_stopwords
 import jieba
 from tqdm import tqdm
-import re
 # %%
 
 # def _get_stop_words(self, add_set):
@@ -10,27 +9,29 @@ import re
 #     return stopwords.union(add_set)
 
 
-def _remove(text):
-    remove_chars = '[0-9’!"#$%&\'()*+,-./:;<=>?@，。?★、…【】《》？“”‘’！[\\]^_`{|}~～１２３４５６７８９０]+'
-    return re.sub(remove_chars, '', text)
+# def _remove(text):
+#     remove_chars = '[0-9’!"#$%&\'()*+,-./:;<=>?@，。?★、…【】《》？“”‘’！[\\]^_`{|}~～１２３４５６７８９０（）①②③④⑤⑥⑦⑧⑨⑩]+'
+#     return re.sub(remove_chars, '', text)
 
 
-def _remove_stop_words(sentence):
-    result = ''
-    stopwords = get_baidu_stopwords()
+def _remove_stop_words(sentence, stopwords_path):
+    result = []
+    stopwords= set(line.strip() for line in open(stopwords_path))
+    
     for word in sentence:
         if word not in stopwords:
-            result += word + ' '
-    return _remove(result)
+            result.append(word)
+    return result
 
 
-def word_segment(line):
+def word_segment(line, stopwords_path='D:\\CodeRepositories\\py_project\\data_mining\\DataMiningMid_Classification\\data\\stopwords.txt'):
     seg_line = jieba.cut(line)
-    seg_line = _remove_stop_words(seg_line)
+    seg_line = _remove_stop_words(seg_line, stopwords_path)
     return seg_line
-
-# def save_segment_
-
+#%%
+doc= '今天天氣晴，我要吃蛋餅'
+print(word_segment(doc))
+#%%
 
 def save_segment_txt(saving_path, data_path, len_lines):
     '''

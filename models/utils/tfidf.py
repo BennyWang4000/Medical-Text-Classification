@@ -2,7 +2,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from config import *
 from df_processor import DfProcessor
 
-df_p = DfProcessor(i_data_dir=I_DATA_DIR, s_data_dir=S_DATA_DIR)
+df_p = DfProcessor(i_data_dir=I_DATA_PATH, s_data_dir=S_DATA_PATH)
 df_p.df_filt(1000)
 i_df, s_df = df_p.get_df('is')
 # %%
