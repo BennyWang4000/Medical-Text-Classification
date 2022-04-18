@@ -16,22 +16,18 @@ from tqdm import tqdm
 
 def _remove_stop_words(sentence, stopwords_path):
     result = []
-    stopwords= set(line.strip() for line in open(stopwords_path))
-    
+    stopwords = set(line.strip() for line in open(stopwords_path))
     for word in sentence:
         if word not in stopwords:
             result.append(word)
     return result
 
 
-def word_segment(line, stopwords_path='D:\\CodeRepositories\\py_project\\data_mining\\DataMiningMid_Classification\\data\\stopwords.txt'):
+def word_segment(line, stopwords_path):
     seg_line = jieba.cut(line)
     seg_line = _remove_stop_words(seg_line, stopwords_path)
     return seg_line
-#%%
-doc= '今天天氣晴，我要吃蛋餅'
-print(word_segment(doc))
-#%%
+
 
 def save_segment_txt(saving_path, data_path, len_lines):
     '''
