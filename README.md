@@ -112,7 +112,6 @@ df = pd.concat([df_i, df_s], ignore_index=True)
 
 df.insert(0, 'cat_dep', df['category']+df['department'])
 ```
-內科跟外科有些 ```department``` 有相同的情況發生，為了區別加了一個欄位 ```cat_dep```，是內科或外加+department。例如內科 csv 內的风湿免疫科，則 ```cat_dep= 內科风湿免疫科```。如此用以分辨內科與外科
 
 原本內科跟外科不同的科別加起來總共有69種，在總共67萬多筆的資料中，有些僅出現一兩次。篩選掉出現次數小於1000的資料。最後剩下20種。以下是過濾後的結果
 cat_dep|amounts
@@ -208,14 +207,12 @@ import jieba
 def word_segment(sentence, stopwords_path):
     '''Word segment and remove stopwords
     Parameters
-    ----------
         sentence: str
             Raw text
         stopwords_path: str
             Path of stopwords text file
 
     Returns
-    -------
         list<str>
             A list that after segment and remove stopwords
     '''
@@ -329,7 +326,7 @@ valid_words = [word for word in words if word in self.model_.wv]
 ## **6. Classification**
 在分類器的選擇上，也有非常多種，本次使用的是叱吒風雲的 Xgboost
 
-第一次選用的參數，跑了一個半小時，在測試資料集僅能到達 56% 左右的準確率。透過不斷測試找到更好的超參數。可以由最前面的表格看到，我們的資料多達20種，數量最多4萬筆至最少的1千7，調整權重看來十分重要。雖然有人很熱心地分享了多分類的權重程式碼，不過可惜的是，權重參數在 XGBoost Classifier 僅用於二分類。
+可以由最前面的表格看到，我們的資料多達20種，數量最多4萬筆至最少的1千7，調整權重看來十分重要。雖然有人很熱心地分享了多分類的權重程式碼，不過可惜的是，權重參數在 XGBoost Classifier 僅用於二分類。
 
 > Set Weights in Multi-class Classfication in Xgboost for Imbalanced Data \
 > link: https://stackoverflow.com/questions/45811201/how-to-set-weights-in-multi-class-classification-in-xgboost-for-imbalanced-data
@@ -366,7 +363,27 @@ print("accuarcy: %.5f%%" % (accuracy*100.0))
 ```
 最後用 test set 簡單的 print 出準確率
 ## **7. Result**
-光是xgboost就有超多種超參數可以做調整。目前最好參數僅能在測試資料集中有 71% 的準確率，我認為還有很大的進步空間。其實原本應該要用，RandmizedSearchCV 調整參數，他可以達到 wandb sweep那樣的效果，但跑一次實在是太久了。
+光是 xgboost 就有超多種超參數可以做調整。第一次選用的參數，跑了一個半小時，在測試資料集僅能到達 56% 左右的準確率。透過不斷測試找到更好的超參數。目前最好參數僅能在測試資料集中有 71% 的準確率，我認為還有很大的進步空間。
+
+```python
+# w2v params
+SIZE= 100,
+MIN_COUNT= 3,
+WORKERS= 4,
+WINDOW= 5,
+
+# xgb params
+LEARNING_RATE= 0.01,
+OBJECTIVE='muli:softmax',
+EVAL_METRIC='mlogloss',
+MAX_DEPTH= 10,
+COLSAMPLE_BYTREE=0.8,
+SUBSAMPLE=0.8,
+```
+
+其實原本應該要用，RandmizedSearchCV 調整參數，他可以達到 wandb sweep那樣的效果，但跑一次實在是太久了。
+
+
 
 上面的 sklearn pipeline 能夠用 joblib 儲存。
 ```python
