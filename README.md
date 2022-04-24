@@ -1,7 +1,7 @@
 # **DataMiningMid_Classification**
 Data Mining Mid-term Report
 
-## **Installation**
+<!-- ## **Installation**
 not done yet :(
 ```bash
 git clone https://github.com/BennyWang4000/DataMiningMid_Classification.git
@@ -14,7 +14,7 @@ not done either :(
 ```python
 doc= ''
 foo(doc, lang='t')
-```
+``` -->
 
 # **More Detail**
 ## **Table of Contents**
@@ -36,7 +36,7 @@ foo(doc, lang='t')
 
 資料集選用了使用github上的簡體中文資料集
 
-> Dataset from Toyhom Chinese-medical-dialogue-data \
+> **Dataset from Toyhom Chinese-medical-dialogue-data** \
 > repo: https://github.com/Toyhom/Chinese-medical-dialogue-data 
 
 裡面總共有五種科別，對應到每一個 csv，裡面的欄位有以下
@@ -48,8 +48,6 @@ department|title|ask|answer
 
 既然已有標記所有的科別名稱，那就讓文句以科別分類，在這次專案內的資料選擇上僅挑了內科與外科
 
-
-# HEAD()
 另外提醒，這篇資料集是簡體字用的gb2312編碼，在讀取時須注意。
 
 ### **- 2.1 刪除多餘換行**
@@ -100,7 +98,19 @@ for csv_path in glob.glob(os.path.join(data_dir, '*', '*.csv'), recursive=True):
 在預設上，也會存為習慣的utf-8編碼
 
 ### **- 2.2 資料選擇**
-內科跟外科有些 ```department``` 有相同的情況發生，為了區別加了一個欄位 ```cat_dep```，是內科或外加+department。例如內科 csv 內的风湿免疫科，則 ```cat_dep= 內科风湿免疫科```
+內科跟外科有些 ```department``` 有相同的情況發生，為了讓兩個 dataframe 接在一起也能有區別，加了一個欄位 ```cat_dep```，是內科或外加+department。例如內科 csv 內的风湿免疫科，則 ```cat_dep= 內科风湿免疫科```。
+
+```python
+df_i = pd.read_csv(I_DATA_PATH, encoding=ENCODING)
+df_s = pd.read_csv(S_DATA_PATH, encoding=ENCODING)
+
+df_i.insert(0, 'category', '內科')
+df_s.insert(0, 'category', '外科')
+
+df = pd.concat([df_i, df_s], ignore_index=True)
+
+df.insert(0, 'cat_dep', df['category']+df['department'])
+```
 
 有些科別出現次數明顯過少，原本內科跟外科不同的科別加起來總共有69種，在總共67萬多筆的資料中，有些僅出現一兩次。篩選掉出現次數小於1000的資料。最後剩下20種。以下是過濾後的結果
 cat_dep|amounts
@@ -126,8 +136,8 @@ cat_dep|amounts
 外科胸外科    |  2913
 外科心外科    |  1777
 
-再將它們加上id，之後用來訓練會用到的
-<!-- 
+再將它們加上id，之後訓練會用到的
+
 cat_dep|dep_id
 ---|---
 內科内分泌科|0
@@ -149,8 +159,8 @@ cat_dep|dep_id
 外科肛肠|16
 外科肝胆科|17
 外科胸外科|18
-外科血管科|19 -->
-
+外科血管科|19
+那最後欄位有這些
 cat_dep|dep_id|department|title|ask|answer
 ---|---|---|---|---|---|
 內科心血管科|2|內科|心血管科|高血压患者能吃党参吗？|我有高血压这两天女婿来的时候给我拿了些党参泡水喝，您好高血压可以吃党参吗？|高血压病人可以口服党参的。党参有降血脂，降血压的作用，可以彻底消除血液中的垃圾，从而对冠心病以及心血管疾病的患者都有一定的稳定预防工作作用，因此平时口服党参能远离三高的危害。另外党参除了益气养血，降低中枢神经作用，调整消化系统功能，健脾补肺的功能。感谢您的进行咨询，期望我的解释对你有所帮助。
@@ -158,14 +168,14 @@ cat_dep|dep_id|department|title|ask|answer
 內科心血管科|2|內科|心血管科|老年人高血压一般如何治疗？|我爷爷今年68了，年纪大了，高血压这些也领着来了，这些病让老人很痛苦，每次都要按时喝药，才能控制住，还得时不时去医院检查一下身体，想进行咨询一下医生，老年人高血压如何治疗？|你爷爷患高血压，这是老年人常见的心血管病，血管老化硬化，血压调整能力消退了，目前治疗高血压最重要的方式就是口服降压药，按时口服，不定期复检血压，把血压控制在正常范围是最理想的状态，建议不定期去医院查体，平时不要抽烟喝啤酒，不要吃太咸的食物。
 內科内分泌科|0|內科|内分泌科|糖尿病还会进行遗传吗？|糖尿病有隔代遗传吗？我妈是糖尿病，很多年了，也没养好，我现在也是，我妹子也是，我儿子现在二十岁，没什么问题，但是以后会不会也得糖尿病啊，真是难过，我现在就已经开始让他控制点吃东西。|2型糖尿病的隔代遗传概率为父母患糖尿病，临产的发生率为40%，比一般人患糖尿病，疾病，如何更重要的选择因素基于生活方式的，后天也隔代遗传隔代遗传易感性更公正，增强患糖尿病的风险，低糖低脂肪，平时清淡饮食，适当锻练，增强监测数据，血糖仪买个备取。
 
-除了上述以外，在這個資料集中，ask 欄位中有 大約四萬筆資料是「无」的，就是有標題沒內文的那種形式。如果要用 ask 來做訓練的話可能就會出狀況
+除了上述以外，在這個資料集中，ask 欄位中有 大約四萬筆資料是「无」的，就是有標題沒內文的那種形式。如果要用 ask 來做訓練的話可能就會出狀況。這邊的處理就是把沒內文的部分，把 title 複製到 ask 中。
 ```python
 import pandas as pd
 
 df.loc[df['ask']== '无', 'ask']= df[df['ask']== '无']['title']
 ```
 
-這邊的處理就是把沒內文的部分，把 title 複製到 ask 中。
+
 ## **3. Text Process**
 準備好資料以後，就能做文字處理了。
 在這部分流程圖如以下
@@ -226,8 +236,7 @@ re['糖尿病', '一般', '需要', '怎么', '治疗', '?']-->|Remove Stopwords
 > **HarvestText**\
 > repo: https://github.com/blmoistawinde/HarvestText
 
-不過，除了使用裡面的停用字以外，分詞完以後我發現在原有的資料中，還有很多符號沒有被清除，所以在裡面新增了一些字，包含各類數字、標點符號、單位、全型空白等。期望能讓資料更乾淨。
-
+不過，除了使用裡面的停用字以外，分詞完以後我發現在原有的資料中，還有很多符號沒有被清除，一樣大多是發生在 ```answer``` 的序列 ① ② ③ 等等。若沒有清除，在做 word embedding 可能會有問題，因為他們在分詞完後也會站一格詞，這並不是我們想看到的。所以在裡面新增了一些字，包含各類數字、標點符號、單位、全型空白等。期望能讓資料更乾淨。
 
 
 ```
@@ -237,20 +246,16 @@ re['糖尿病', '一般', '需要', '怎么', '治疗', '?']-->|Remove Stopwords
 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ
 ```
 
-
-
 ```python
 def _remove_stop_words(words, stopwords_path):
     '''Remove stopwords
     Parameters
-    ----------
         words: list<dir>
             list of word segmentation
         stopwords_path: str
             Path of stopwords text file
 
     Returns
-    -------
         list<str>
             A list that after remove stopwords
     '''
@@ -268,7 +273,7 @@ df['answer_clean'] = df['answer'].apply(lambda x: ws.word_segment(x, STOP_WORDS_
 df['ask_clean'] = df['ask'].apply(lambda x: ws.word_segment(x, STOP_WORDS_PATH))
 df['title_clean'] = df['title'].apply(lambda x: ws.word_segment(x, STOP_WORDS_PATH))
 ```
-用 lambda function 來呼叫我們已做好的分詞函式
+應用在 dataframe 可以用 lambda function 來呼叫我們已做好的分詞函式，也能達到每個欄位都有分詞到的效果。
 
 在執行完上述步驟以後，再一次存成 csv file 方便之後讀取，畢竟分詞需要花上不少時間
 ## **4. Pipeline**
@@ -283,23 +288,14 @@ from ast import literal_eval
 x_train= [literal_eval(lst) for lst in x_train]
 x_test= [literal_eval(lst) for lst in x_test]
 ```
-## **5. Tokenize**
-為了要讓機器看得懂自然語言，會將文字以矩陣的方式表達。
-目前我知道有以下作法
-### **- 5.1 Bag of Words**
+## **5. Word Embedding**
+為了要讓機器看得懂自然語言，會將文字以陣列等方式表達。目前我知道有以下作法 Bag of Words、TF-IDF Vectorize、Word2Vec 等等。在這篇文章將使用 Gensim Word2Vec 完成 word embedding
 
-### **- 5.2 TF-IDF**
-用sklearn裡面的套件做的tokenization，
+不過，由於我們要使用到 sklearn pipeline，而 gensimi 在 4.0.0 以後的版本不再支援第三方 wrapper。這邊可以選擇將 3.8.13 的 wrapper 複製過來或者直接降低 gensim 版本
 
-### **- 5.3 Word Embedding**
-在這篇文章將使用 Gensim Word2Vec 完成 word embedding
+我這裡是選擇繼續使用 gensim 4.1.2 但配合別人寫的 Word2Vec Vectorizer。
 
-不過，gensimi在4.0.0以後的版本不再支援第三方wrapper
-可以選擇將3.8.13複製過來或者降低gensim版本
-
-我這裡是選擇繼續使用gensim 4.1.2 但配合別人寫的 Word2Vec Vectorizer。
-
-解釋一下會什麼是用別人做好的 Transformer，而不是從3.8.13複製。其實我有試過，但會跳出 Key error，原因是 gesim 原本在 sklearn_api 裡面的 vectorizer 沒有支援新增文字的功能，遇到新的字詞就會跳出錯誤，如下圖。
+解釋一下會什麼是用別人做好的 Transformer，而不是從 gensim 3.8.13 repo 複製。其實我有試過，但在訓練時會跳出 Key error 無法進行，原因是 gensim 原本在 sklearn_api 裡面的 vectorizer 沒有支援新增文字的功能，遇到新的字詞就會跳出錯誤，如下圖。
 ![keyerror](https://cdn.discordapp.com/attachments/744849098926063667/965974616973672448/2022-04-18_162107.png)
 
 這部份有人做出來了，換用他的就能解決了。
