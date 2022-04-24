@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 import joblib
 # %%
 
+'''
+abandoned
+'''
 
 class TextModel(Pipeline):
     def __init__(
