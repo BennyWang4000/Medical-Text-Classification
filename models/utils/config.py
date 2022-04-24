@@ -9,6 +9,7 @@ S_DATA_PATH = 'D:\\CodeRepositories\\py_project\\data_mining\\Chinese-medical-di
 SAVING_DIR = 'D:\\CodeRepositories\\py_project\\data_mining\\DataMiningMid_Classification\\data'
 ALL_DATA_PATH = 'D:\\CodeRepositories\\py_project\\data_mining\\DataMiningMid_Classification\\data\\df.csv'
 STOP_WORDS_PATH = 'D:\\CodeRepositories\\py_project\\data_mining\\DataMiningMid_Classification\\data\\stopwords.txt'
+RUNS_PATH = 'D:\\CodeRepositories\\py_project\\data_mining\\DataMiningMid_Classification\\runs'
 ENCODING = 'utf-8'
 
 DEP_MIN_AMOUNT = 1000

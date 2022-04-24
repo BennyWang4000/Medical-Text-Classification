@@ -20,11 +20,13 @@ foo(doc, lang='t')
 ## **Table of Contents**
 1. [Introduce](#1-introduce)
 2. [Clean Data](#2-clean-data)
-3. [Text Pre-processing](#text-processing)
-4. [Tokenization](#tokenization)
-5. [Classification](#classification)
-6. [Result](#result)
-7. [Discussion](#discussion)
+3. [Text Process](#3-text-process)
+4. [Pipeline](#4-pipeline)
+5. [Word Embedding](#5-word-embedding)
+6. [Classification](#6-classification)
+7. [Result](#7-result)
+8. [Discussion](#8-discussion)
+9. [Reference](#9-reference)
 
 ## **1. Introduce**
 在期中以前教利用各式演算法依據資料特性做分群或分類。
@@ -279,12 +281,14 @@ df['title_clean'] = df['title'].apply(lambda x: ws.word_segment(x, STOP_WORDS_PA
 
 在執行完上述步驟以後，再一次存成 csv file 方便之後讀取，畢竟分詞需要花上不少時間
 ## **4. Pipeline**
-後面的流程會由 sklearn 包，pipeline 會搞定一切
+後面的流程會由 sklearn 的 pipeline 包起來
+
 
 ```python
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test= train_test_split(df['ask_clean'], df['dep_id'], test_size=0.2, shuffle=True)
 ```
+原本儲存在 csv 裡的 string 轉回 list，輸出```[[str], [str], [str]]``` 的結構
 ```python
 from ast import literal_eval
 x_train= [literal_eval(lst) for lst in x_train]
@@ -312,6 +316,7 @@ x_test= [literal_eval(lst) for lst in x_test]
 且根據上面連結的說明，有兩處參數名稱需要更改
 iter => epochs, size => vector_size
 
+
 還有
 ```python
 valid_words = [word for word in words if word in self.model_.wv.vocab]
@@ -321,17 +326,14 @@ valid_words = [word for word in words if word in self.model_.wv.vocab]
 valid_words = [word for word in words if word in self.model_.wv]
 ```
 如此一來就能正常使用了
-## **Classification**
+## **6. Classification**
 在分類器的選擇上，也有非常多種，本次使用的是叱吒風雲的 Xgboost
 
-第一次選用的參數，跑了一個半小時，在測試資料集僅能到達 56% 左右的準確率qq
-第二次增加了vector size 到 120，縮小window到5，增加了試圖解決資料不平均問題的scale pos weight，max depth 增加到10，
-
-可以由最前面的表格看到，我們的資料多達20種，數量最多4萬筆嘴少1千7，調整權重就相當重要。有人很熱心地分享了多分類的權重程式碼
+第一次選用的參數，跑了一個半小時，在測試資料集僅能到達 56% 左右的準確率。透過不斷測試找到更好的超參數。可以由最前面的表格看到，我們的資料多達20種，數量最多4萬筆至最少的1千7，調整權重看來十分重要。雖然有人很熱心地分享了多分類的權重程式碼，不過可惜的是，權重參數在 XGBoost Classifier 僅用於二分類。
 
 > Set Weights in Multi-class Classfication in Xgboost for Imbalanced Data \
 > link: https://stackoverflow.com/questions/45811201/how-to-set-weights-in-multi-class-classification-in-xgboost-for-imbalanced-data
-
+<!-- 
 ```python
 from utils.sklearn_api.gensim_word2vec import GensimWord2VecVectorizer
 from sklearn.pipeline import Pipeline
@@ -349,7 +351,9 @@ xgb_model= Pipeline([
         colsample_btree=COLSAMPLE_BTREE,
         subsample=SUBSAMPLE))
 ])
-```
+``` -->
+
+
 ```python
 from sklearn.metrics import accuracy_score
 xgb_model.fit(x_train, y_train)
@@ -361,16 +365,9 @@ accuracy = accuracy_score(y_test,y_test_pred)
 print("accuarcy: %.5f%%" % (accuracy*100.0))
 ```
 最後用 test set 簡單的 print 出準確率
-## **Experimental Result**
-光是xgboost就有超多種超參數可以做調整
-目前最好參數僅能在測試資料集中有68%的準確率，我認為還有很大的進步空間，
-<!-- 
- 可以改由Skorch 或 Pytorch 架構改寫
-還能加上wandb 使用 sweep 找到更好的hyper parameters -->
+## **7. Result**
+光是xgboost就有超多種超參數可以做調整。目前最好參數僅能在測試資料集中有 71% 的準確率，我認為還有很大的進步空間。其實原本應該要用，RandmizedSearchCV 調整參數，他可以達到 wandb sweep那樣的效果，但跑一次實在是太久了。
 
-其實原本應該要用，RandmizedSearchCV 調整參數
-他可以達到wandb sweep那樣的效果。
-## **Package**
 上面的 sklearn pipeline 能夠用 joblib 儲存。
 ```python
 import joblib
@@ -378,7 +375,44 @@ import os
 
 joblib.dump(xgb_model, os.path.join(SAVING_DIR, 'xgb_model.joblib'))
 ```
-## **Discussion**
-從前也有在其他地方寫過教學文，這次想要有所突破，仿造其他人package的作法，從想法到最後推測花了一個禮拜多。雖說想要往NLP的方向前進，但說來慚愧，這是筆者第一支完成的NLP project，目前還在執行的其他專案還面臨著大方向的問題，還在尋找適合的解決方法，往往會花上一整周的時間查資料、看論文，不過都沒有太大的幫助。期望往後能在這支專案中找到什麼靈感。
 
-## **Reference**
+```python
+xgb_pipeline = joblib.load(model_path)
+
+w2v_layer = xgb_pipeline.named_steps["w2v"]
+xgb_layer = xgb_pipeline.named_steps["xgb"]
+```
+可以分別取出兩層，取出以後就可以印出裡面的內容了
+以下是使用 ```plot_importance()``` 印出的圖表
+
+![cover](https://cdn.discordapp.com/attachments/744849098926063667/967762616745332816/cove.png)
+![gain](https://cdn.discordapp.com/attachments/744849098926063667/967762616976031774/gain.png)
+![weight](https://cdn.discordapp.com/attachments/744849098926063667/967762617470955630/weight.png)
+
+[embed]https://cdn.discordapp.com/attachments/744849098926063667/967768998492139530/xgb_graph.pdf[/embed]
+
+結果測試
+```python
+x= '你好，之前打球脚扭伤了，想问问什么时候可以继续打球'
+
+xgb_pipeline.predict(ws.word_segment(x, STOP_WORDS_PATH))
+
+>>> array([ 5, 13, 13, 19,  6, 13], dtype=int64)
+```
+可以看到輸出最多的是 13 的一般外科
+
+老實說我認為這種算法還有很多地方可以改進，往往決定整句是哪個分類的止會有一兩個詞而已，但是一些比較籠統的表達句子存在時，如「肚子痛」、「人不舒服」等，便會影響輸出的準確度。
+
+## **8. Discussion**
+從想法到最後推測花了一個禮拜多，不過最後結果不是很滿意，就算換成了內、外兩科，最高也只能有 80% 左右的準確率，而且原本是打算依據最重要的 dimension plot 出 word2vec 圖，但結果都是黑漆漆的一團。雖說想要往NLP的方向前進，但說來慚愧，這是筆者第一支完成的NLP project，目前還在執行的其他專案還面臨著大方向的問題，還在尋找適合的解決方法。往往會花上一整周的時間查資料、看論文，不過都沒有太大的幫助。期望往後能在這支專案中找到什麼靈感。
+
+
+## **9. Reference**
+https://github.com/Toyhom/Chinese-medical-dialogue-data
+https://github.com/blmoistawinde/HarvestText
+https://github.com/ethen8181/machine-learning/blob/master/keras/text_classification/transformers/gensim_word2vec.py
+https://github.com/RaRe-Technologies/gensim/wiki/Migrating-from-Gensim-3.x-to-4
+https://stackoverflow.com/questions/45811201/how-to-set-weights-in-multi-class-classification-in-xgboost-for-imbalanced-dat
+http://ethen8181.github.io/machine-learning/keras/text_classification/word2vec_text_classification.html
+https://towardsdatascience.com/text-classification-with-nlp-tf-idf-vs-word2vec-vs-bert-41ff868d1794
+https://xgboost.readthedocs.io/en/stable/parameter.html
