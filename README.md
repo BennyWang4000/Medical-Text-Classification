@@ -68,7 +68,7 @@ department|title|ask|answer
 dep_lst=['Surgical', 'IM']
 df = pd.DataFrame
 
-col_lst= ['精神疾病', '计划生育''体检''减肥' '生活疾病' '结核病''美容' '复杂先心病''精神心理''传染病''健身''动脉导管未闭''皮肤顽症''肛肠''科']
+col_lst= ['精神疾病', '计划生育', '体检', '减肥', '生活疾病', '结核病', '美容', '复杂先心病', '精神心理', '传染病', '健身', '动脉导管未闭', '皮肤顽症', '肛肠', '科']
 
 for csv_path in glob.glob(os.path.join(data_dir, '*', '*.csv'), recursive=True):
     isStart = True
