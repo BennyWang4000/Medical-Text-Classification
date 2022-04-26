@@ -253,7 +253,7 @@ abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZａｂｃｄｅｆｇｈｉ�
 def _remove_stop_words(words, stopwords_path):
     '''Remove stopwords
     Parameters
-        words: list<dir>
+        words: list<str>
             list of word segmentation
         stopwords_path: str
             Path of stopwords text file
