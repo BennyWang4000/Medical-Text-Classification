@@ -77,26 +77,25 @@ for csv_path in glob.glob(os.path.join(data_dir, '*', '*.csv'), recursive=True):
     if csv_name in dep_lst:
         with open(csv_path, 'r', encoding='gb2312', errors='ignore') as ori_file:
             with open(os.path.join(saving_dir, csv_name + '.csv'), 'w+') as cln_file:
-                for lines in ori_file:
-                    # 依行分隔
-                    for para in lines.split('\n'): 
-                        # 取出前七個字, maximum_size_of_dep=7
-                        front = para[:maximum_size_of_dep if len(para) > maximum_size_of_dep else len(para)]
-                        
-                        # 前七個字是否有科別名稱
-                        if ('精神疾病' in para or '计划生育' in front or '体检' in front or '减肥' in front or '生活疾病' in front or '结核病' in front or '美容' in front or '复杂先心病' in front or '精神心理' in front or '传染病' in front or '健身' in front or '动脉导管未闭' in front or '皮肤顽症' in front or '肛肠' in front or '科' in front) and ',' in front:
-                           # 為了讓第一行也能拿到用的
-                            if isStart:
-                                last_para = para
-                                isStart = False
-                                continue
-                            # 如果有科別名稱的話，把前面那段寫進text，並開始新的一行
-                            cln_file.write(last_para + '\n')
+                # 依行分隔
+                for para in ori_file:
+                    # 取出前七個字, maximum_size_of_dep=7
+                    front = para[:maximum_size_of_dep if len(para) > maximum_size_of_dep else len(para)]
+
+                    # 前七個字是否有科別名稱
+                    if ('精神疾病' in para or '计划生育' in front or '体检' in front or '减肥' in front or '生活疾病' in front or '结核病' in front or '美容' in front or '复杂先心病' in front or '精神心理' in front or '传染病' in front or '健身' in front or '动脉导管未闭' in front or '皮肤顽症' in front or '肛肠' in front or '科' in front) and ',' in front:
+                       # 為了讓第一行也能拿到用的
+                        if isStart:
                             last_para = para
-                            
-                        else:
-                            # 若不是，則把這次的內容加到上一段內
-                            last_para = last_para + para
+                            isStart = False
+                            continue
+                        # 如果有科別名稱的話，把前面那段寫進text，並開始新的一行
+                        cln_file.write(last_para + '\n')
+                        last_para = para
+
+                    else:
+                        # 若不是，則把這次的內容加到上一段內
+                        last_para = last_para + para
 ```
 在預設上，也會存為習慣的utf-8編碼
 
