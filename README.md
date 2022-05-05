@@ -1,4 +1,4 @@
-# Data Mining Mid-term Report 分類
+# Data Mining for Text Classification
 
 <!-- ## **Installation**
 not done yet :(
