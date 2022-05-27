@@ -340,7 +340,7 @@ valid_words = [word for word in words if word in self.model_.wv]
 ```
 如此一來就能正常使用了
 ## **6. Classification**
-在分類器的選擇上，也有非常多種，本次使用的是叱吒風雲的 Xgboost
+在分類器的選擇上，也有非常多種，本次使用的是 Xgboost
 
 可以由最前面的表格看到，我們的資料多達20種，數量最多4萬筆至最少的1千7，調整權重看來十分重要。雖然有人很熱心地分享了多分類的權重程式碼，不過可惜的是，權重參數在 XGBoost Classifier 僅用於二分類。
 
