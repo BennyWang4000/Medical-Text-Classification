@@ -16,7 +16,7 @@ foo(doc, lang='t')
 ``` -->
 
 <!-- # **More Detail** -->
-## **Table of Contents**
+## **Contents**
 1. [Introduce](#1-introduce)
 2. [Clean Data](#2-clean-data)
 3. [Text Process](#3-text-process)
