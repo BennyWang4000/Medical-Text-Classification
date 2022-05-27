@@ -426,11 +426,11 @@ xgb_layer = xgb_pipeline.named_steps["xgb"]
 
 結果測試
 ```python
-x= '你好，之前打球脚扭伤了，想问问什么时候可以继续打球'
+x= '我腰痛头痛肋骨也痛'
 
 xgb_pipeline.predict(ws.word_segment(x, STOP_WORDS_PATH))
 
->>> array([ 5, 13, 13, 19,  6, 13], dtype=int64)
+>>> array([13,  6, 13,  0], dtype=int64)
 ```
 可以看到輸出最多的是 13 的一般外科
 
