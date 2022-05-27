@@ -430,13 +430,13 @@ x= '我腰痛头痛肋骨也痛'
 
 xgb_pipeline.predict(ws.word_segment(x, STOP_WORDS_PATH))
 
->>> array([13,  6, 13,  0], dtype=int64)
+>>> array([ 4,  9, 18, 13, 16], dtype=int64)
 ```
 可以看到輸出最多的是 13 的一般外科
 
 老實說我認為這種算法還有很多地方可以改進，往往決定整句是哪個分類的止會有一兩個詞而已，但是一些比較籠統的表達句子存在時，如「肚子痛」、「人不舒服」等，便會影響輸出的準確度。
 ```python
-x= '我今天测高血压，头痛又背痛要怎么缓解'
+x= '我今天测高血压，胸闷又胸痛要怎么缓解'
 
 xgb_pipeline.predict(ws.word_segment(x, STOP_WORDS_PATH))
 
